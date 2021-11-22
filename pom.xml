@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.fjossinet.rnartist</groupId>
+    <artifactId>kaknas</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>Kaknas</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <kotlin.version>1.6.0</kotlin.version>
+        <javafx.version>18-ea+7</javafx.version>
+        <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <dokka.version>1.5.31</dokka.version>
+        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+        <main.class>io.github.fjossinet.rnartist.kaknas.KaknasKt</main.class>
+    </properties>
+
+    <dependencies>
+
+        <!-- openjfx -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
+        <!-- kotlin -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-scripting-jsr223</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-script-runtime</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--rnartistcore -->
+        <dependency>
+            <groupId>io.github.fjossinet.rnartist</groupId>
+            <artifactId>rnartistcore</artifactId>
+            <version>0.2.9-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <plugins>
+
+            <plugin>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin/</sourceDir>
+                            </sourceDirs>
+                            <args>
+                                <arg>-Xuse-ir</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/test/kotlin</sourceDir>
+                            </sourceDirs>
+                            <args>
+                                <arg>-Xuse-ir</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>${main.class}</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-Xms500M</argument>
+                                <argument>-Xmx500M</argument>
+                                <argument>-Dprism.lcdtext=false
+                                </argument> <!--anti-aliasing to avoid to have scratched fonts-->
+                                <argument>-jar</argument>
+                                <argument>
+                                    ${project.basedir}/target/kaknas-${project.version}-jar-with-dependencies.jar
+                                </argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>
